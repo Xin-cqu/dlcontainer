@@ -2,182 +2,151 @@ FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
 MAINTAINER Xin Wen <nclxwen@gmail.com>
 
-ARG TENSORFLOW_VERSION=1.12.0
-ARG TENSORFLOW_ARCH=gpu
-ARG KERAS_VERSION=2.2.4
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+# =================================
+# cuda          10.0
+# cudnn         v7
+# ---------------------------------
+# python        3.6
+# anaconda      5.0.1
+# ---------------------------------
+# Xgboost       0.6(gpu)
+# lightgbm      2.0.10(gpu)
+# ---------------------------------
+# tensorflow    1.12.0 (pip)
+# pytorch       latest  (pip)
+# keras         latest (pip)
+# ---------------------------------
 
+# =================================
+# Path Setting
+# =================================
+ENV CUDA_HOME /usr/local/cuda
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/usr/local/lib
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:${LD_LIBRARY_PATH}
 
-#RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
-#	cat /proc/driver/nvidia/version && \
-#	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
-#	nvcc -V && \
-#	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
+ENV OPENCL_LIBRARIES /usr/local/cuda/lib64
+ENV OPENCL_INCLUDE_DIR /usr/local/cuda/include
+# =================================
+# basic
+# =================================
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install some dependencies
-RUN apt-get update && apt-get install -y \
-		bc \
-		build-essential \
-		cmake \
-		curl \
-		g++ \
-		gfortran \
-		git \
-		libffi-dev \
-		libfreetype6-dev \
-		libhdf5-dev \
-		libjpeg-dev \
-		liblcms2-dev \
-		libopenblas-dev \
-		liblapack-dev \
-		libopenjpeg2 \
-		libpng12-dev \
-		libssl-dev \
-		libtiff5-dev \
-		libwebp-dev \
-		libzmq3-dev \
-		nano \
-		pkg-config \
-		python-dev \
-		software-properties-common \
-		unzip \
-		vim \
-		wget \
-		zlib1g-dev \
-		qt5-default \
-		libvtk6-dev \
-		zlib1g-dev \
-		libjpeg-dev \
-		libwebp-dev \
-		libpng-dev \
-		libtiff5-dev \
-		libjasper-dev \
-		libopenexr-dev \
-		libgdal-dev \
-		libdc1394-22-dev \
-		libavcodec-dev \
-		libavformat-dev \
-		libswscale-dev \
-		libtheora-dev \
-		libvorbis-dev \
-		libxvidcore-dev \
-		libx264-dev \
-		yasm \
-		libopencore-amrnb-dev \
-		libopencore-amrwb-dev \
-		libv4l-dev \
-		libxine2-dev \
-		libtbb-dev \
-		libeigen3-dev \
-		python-dev \
-		python-tk \
-		python-numpy \
-		python3-dev \
-		python3-tk \
-		python3-numpy \
-		ant \
-		default-jdk \
-		doxygen \
-		&& \
-	apt-get clean && \
-	apt-get autoremove && \
-	rm -rf /var/lib/apt/lists/* && \
-# Link BLAS library to use OpenBLAS using the alternatives mechanism (https://www.scipy.org/scipylib/building/linux.html#debian-ubuntu)
-	update-alternatives --set libblas.so.3 /usr/lib/openblas-base/libblas.so.3
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        gcc \
+        g++\
+        cmake\
+        curl \
+        git \
+        vim\
+        mercurial \
+        subversion \
+        vim \
+        libcurl3-dev \
+        libfreetype6-dev \
+        libpng12-dev \
+        libzmq3-dev \
+        libglib2.0-0 \
+        libxext6 \
+        libsm6 \
+        libxrender1\
+        libboost-dev \
+        libboost-system-dev \
+        libboost-filesystem-dev \
+        pkg-config \
+        rsync \
+        software-properties-common \
+        unzip \
+        zip \
+        zlib1g-dev \
+        openjdk-8-jdk \
+        openjdk-8-jre-headless \
+        wget \
+        bzip2\
+        ca-certificates \
+        libboost-all-dev \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+# =================================
+# Anaconda
+# =================================
+RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
+	wget --quiet https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh -O ~/anaconda.sh && \
+	/bin/bash ~/anaconda.sh -b -p /opt/conda && \
+    rm ~/anaconda.sh
 
-# Install pip
-RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-	python get-pip.py && \
-	rm get-pip.py
-
-# Add SNI support to Python
-RUN pip --no-cache-dir install \
-		pyopenssl \
-		ndg-httpsclient \
-		pyasn1
-
-# Install useful Python packages using apt-get to avoid version incompatibilities with Tensorflow binary
-# especially numpy, scipy, skimage and sklearn (see https://github.com/tensorflow/tensorflow/issues/2034)
-RUN apt-get update && apt-get install -y \
-		python-numpy \
-		python-scipy \
-		python-nose \
-		python-h5py \
-		python-skimage \
-		python-matplotlib \
-		python-pandas \
-		python-sklearn \
-		python-sympy \
-		&& \
-	apt-get clean && \
-	apt-get autoremove && \
-	rm -rf /var/lib/apt/lists/*
-
-# Install other useful Python packages using pip
-RUN pip --no-cache-dir install --upgrade ipython && \
-	pip --no-cache-dir install \
-		Cython \
-		ipykernel \
-		jupyter \
-		path.py \
-		Pillow \
-		pygments \
-		six \
-		sphinx \
-		wheel \
-		zmq \
-		&& \
-	python -m ipykernel.kernelspec
-
-
-# Install TensorFlow
-RUN pip --no-cache-dir install \
-	https://storage.googleapis.com/tensorflow/linux/${TENSORFLOW_ARCH}/tensorflow_${TENSORFLOW_ARCH}-${TENSORFLOW_VERSION}-cp27-none-linux_x86_64.whl
-
-# Install Keras
-RUN pip --no-cache-dir install git+git://github.com/fchollet/keras.git@${KERAS_VERSION}
-
-
-# Export the LUA evironment variables manually
-ENV LUA_PATH='/root/.luarocks/share/lua/5.1/?.lua;/root/.luarocks/share/lua/5.1/?/init.lua;/root/torch/install/share/lua/5.1/?.lua;/root/torch/install/share/lua/5.1/?/init.lua;./?.lua;/root/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua' \
-	LUA_CPATH='/root/.luarocks/lib/lua/5.1/?.so;/root/torch/install/lib/lua/5.1/?.so;./?.so;/usr/local/lib/lua/5.1/?.so;/usr/local/lib/lua/5.1/loadall.so' \
-	PATH=/root/torch/install/bin:$PATH \
-	LD_LIBRARY_PATH=/root/torch/install/lib:$LD_LIBRARY_PATH \
-	DYLD_LIBRARY_PATH=/root/torch/install/lib:$DYLD_LIBRARY_PATH
-ENV LUA_CPATH='/root/torch/install/lib/?.so;'$LUA_CPATH
-
-# Install the latest versions of nn, cutorch, cunn, cuDNN bindings and iTorch
-RUN luarocks install nn && \
-	luarocks install cutorch && \
-	luarocks install cunn && \
-    luarocks install loadcaffe && \
-	\
-	cd /root && git clone https://github.com/soumith/cudnn.torch.git && cd cudnn.torch && \
-	git checkout R4 && \
-	luarocks make && \
-	\
-	cd /root && git clone https://github.com/facebook/iTorch.git && \
-	cd iTorch && \
-	luarocks make
-
-# Install OpenCV
-RUN git clone --depth 1 https://github.com/opencv/opencv.git /root/opencv && \
-	cd /root/opencv && \
-	mkdir build && \
-	cd build && \
-	cmake -DWITH_QT=ON -DWITH_OPENGL=ON -DFORCE_VTK=ON -DWITH_TBB=ON -DWITH_GDAL=ON -DWITH_XINE=ON -DBUILD_EXAMPLES=ON .. && \
-	make -j"$(nproc)"  && \
-	make install && \
-	ldconfig && \
-	echo 'ln /dev/null /dev/raw1394' >> ~/.bashrc
-
-# Set up notebook config
+ENV PATH /opt/conda/bin:${PATH}
+RUN pip install --upgrade pip
+# set up jupyter notebook
 COPY jupyter_notebook_config.py /root/.jupyter/
+EXPOSE 8888
 
-# Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
-COPY run_jupyter.sh /root/
 
-# Expose Ports for TensorBoard (6006), Ipython (8888)
-EXPOSE 6006 8888
+# =================================
+# Tensorflow&keras
+# =================================
+RUN pip --no-cache-dir install \
+    http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.4.0-cp36-cp36m-linux_x86_64.whl
+EXPOSE 6006
 
-WORKDIR "/root"
-CMD ["/bin/bash"]
+RUN pip --no-cache-dir install keras
+
+# =================================
+# Pytorch
+# =================================
+RUN conda install --quiet --yes pytorch torchvision cuda80 -c soumith
+
+# =================================
+# Xgboost + gpu
+# =================================
+RUN cd /usr/local/src && \
+  git clone --recursive https://github.com/dmlc/xgboost && \
+  cd xgboost && \
+  mkdir build && \
+  cd build && \
+  cmake --DUSE_CUDA=ON .. && \
+  make -j
+
+RUN cd /usr/local/src/xgboost/python-package && \
+  python setup.py install 
+
+
+# =================================
+# lightgbm + gpu
+# =================================
+RUN apt-get install -y libboost-all-dev
+
+RUN mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
+RUN cd /usr/local/src && mkdir lightgbm && cd lightgbm && \
+    git clone --recursive https://github.com/Microsoft/LightGBM && \
+    cd LightGBM && mkdir build && cd build && \
+    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
+	make OPENCL_HEADERS=/usr/local/cuda-8.0/targets/x86_64-linux/include LIBOPENCL=/usr/local/cuda-8.0/targets/x86_64-linux/lib
+RUN /bin/bash -c "cd /usr/local/src/lightgbm/LightGBM/python-package && python setup.py install --precompile "
+
+# =================================
+# tini
+# =================================
+
+ENV TINI_VERSION v0.16.1
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+# =================================
+# clean
+# =================================
+
+RUN apt-get autoremove -y && apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    conda clean -i -l -t -y
+
+# =================================
+# settings
+# =================================
+RUN mkdir /notebook
+ENTRYPOINT ["/tini", "--"]
+CMD ["jupyter", "notebook", "--no-browser", "--allow-root"]
+WORKDIR /notebook
