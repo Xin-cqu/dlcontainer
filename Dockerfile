@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 
+FROM nvidia/cuda:8.0-cudnn7-devel-ubuntu16.04 
 
 MAINTAINER Xin Wen <nclxwen@gmail.com>
 
@@ -89,7 +89,7 @@ EXPOSE 8888
 # Tensorflow&keras
 # =================================
 RUN pip --no-cache-dir install \
-    http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.4.0-cp36-cp36m-linux_x86_64.whl
+    http://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.12.0-cp36-cp36m-linux_x86_64.whl
 EXPOSE 6006
 
 RUN pip --no-cache-dir install keras
