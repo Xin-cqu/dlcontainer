@@ -46,7 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
         libcurl3-dev \
         libfreetype6-dev \
-        libpng12-0=1.2.54-1ubuntu1 \
+       
         libzmq3-dev \
         libglib2.0-0 \
         libxext6 \
