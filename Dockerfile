@@ -17,7 +17,7 @@
 # ---------------------------------
 
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
-LABEL maintainer="lzq910123@gmail.com"
+LABEL maintainer="nclxwen@gmail.com"
 
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
@@ -74,39 +74,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         matplotlib \
         Cython \
         && \
-
-
-
-
-# =================================
-# Xgboost + gpu
-# =================================
-RUN cd /usr/local/src && \
-  git clone --recursive https://github.com/dmlc/xgboost && \
-  cd xgboost && \
-  mkdir build && \
-  cd build && \
-  cmake --DUSE_CUDA=ON .. && \
-  make -j
-
-RUN cd /usr/local/src/xgboost/python-package && \
-  python setup.py install 
-
-
-# =================================
-# lightgbm + gpu
-# =================================
-RUN apt-get install -y libboost-all-dev
-
-RUN mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
-RUN cd /usr/local/src && mkdir lightgbm && cd lightgbm && \
-    git clone --recursive https://github.com/Microsoft/LightGBM && \
-    cd LightGBM && mkdir build && cd build && \
-    cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. && \
-	make OPENCL_HEADERS=/usr/local/cuda-8.0/targets/x86_64-linux/include LIBOPENCL=/usr/local/cuda-8.0/targets/x86_64-linux/lib
-RUN /bin/bash -c "cd /usr/local/src/lightgbm/LightGBM/python-package && python setup.py install --precompile "
-
 # ==================================================================
 # boost
 # ------------------------------------------------------------------
