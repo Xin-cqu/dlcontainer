@@ -15,7 +15,7 @@
 # keras         latest (pip)
 # ---------------------------------
 
-FROM nvidia/cuda:10.0-base-ubuntu16.04 as base
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 as base
 LABEL maintainer="nclxwen@gmail.com"
 
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
