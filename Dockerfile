@@ -1,5 +1,5 @@
 # =================================
-# cuda          10.0
+# cuda          9.0
 # cudnn         v7
 # ---------------------------------
 # python        3.6
@@ -17,6 +17,8 @@
 # ---------------------------------
 
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+LABEL maintainer="lzq910123@gmail.com"
+
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
     GIT_CLONE="git clone --depth 10" && \
@@ -40,7 +42,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         git \
         vim \
         && \
-LABEL maintainer="lzq910123@gmail.com"
 
 # ==================================================================
 # python
