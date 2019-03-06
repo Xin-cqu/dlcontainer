@@ -38,6 +38,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         apt-utils \
         ca-certificates \
         cmake \
+        curl \
         wget \
         git \
         vim \
