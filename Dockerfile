@@ -158,6 +158,9 @@ RUN apt-get install -y curl grep sed dpkg && \
 # =================================
 # settings
 # =================================
+# set up jupyter notebook
+COPY jupyter_notebook_config.py /root/.jupyter/
+EXPOSE 8888 6006
 RUN mkdir /notebook
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 CMD ["jupyter", "notebook", "--no-browser", "--allow-root"]
