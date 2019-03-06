@@ -17,21 +17,20 @@
 
 FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 as base
 LABEL maintainer="nclxwen@gmail.com"
-
+# =================================================================
+# set evn
+# -----------------------------------------------------------------
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
     GIT_CLONE="git clone --depth 10" && \
-
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
 
     apt-get update && \
-
 # ==================================================================
 # tools
 # ------------------------------------------------------------------
-
     DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         build-essential \
         apt-utils \
@@ -42,11 +41,9 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         git \
         vim \
         && \
-
 # ==================================================================
 # python
 # ------------------------------------------------------------------
-
     DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
         software-properties-common \
         && \
@@ -77,33 +74,27 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ==================================================================
 # boost
 # ------------------------------------------------------------------
-
     wget -O ~/boost.tar.gz https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz && \
     tar -zxf ~/boost.tar.gz -C ~ && \
     cd ~/boost_* && \
     ./bootstrap.sh --with-python=python3.6 && \
     ./b2 install --prefix=/usr/local && \
-
 # ==================================================================
 # chainer
 # ------------------------------------------------------------------
-
     $PIP_INSTALL \
         cupy \
         chainer \
         && \
-
 # ==================================================================
 # jupyter
 # ------------------------------------------------------------------
-
     $PIP_INSTALL \
         jupyter \
         && \
 # ==================================================================
 # pytorch
 # ------------------------------------------------------------------
-
     $PIP_INSTALL \
         future \
         numpy \
@@ -117,27 +108,22 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         torch_nightly -f \
         https://download.pytorch.org/whl/nightly/cu90/torch_nightly.html \
         && \
-
 # ==================================================================
 # tensorflow
 # ------------------------------------------------------------------
-
     $PIP_INSTALL \
         tensorflow-gpu \
         && \
 # ==================================================================
 # keras
 # ------------------------------------------------------------------
-
     $PIP_INSTALL \
         h5py \
         keras \
         && \
-        
 # ==================================================================
 # config & cleanup
 # ------------------------------------------------------------------
-
     ldconfig && \
     apt-get clean && \
     apt-get autoremove && \
@@ -152,8 +138,9 @@ RUN apt-get install -y curl grep sed dpkg && \
     rm tini.deb && \
     apt-get clean
 # =================================
-# clean
+# tornado version=5.1.1
 # =================================
+RUN pip install --upgrade tornado==5.1.1
 # =================================
 # settings
 # =================================
