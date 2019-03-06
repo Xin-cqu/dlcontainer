@@ -191,7 +191,7 @@ RUN apt-get install -y curl grep sed dpkg && \
     rm tini.deb && \
     apt-get clean
 # =================================
-# clean
+# clean pakages
 # =================================
 
 RUN apt-get autoremove -y && apt-get clean && \
