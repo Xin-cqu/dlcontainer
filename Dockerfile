@@ -15,7 +15,7 @@
 # keras         latest (pip)
 # ---------------------------------
 
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04 as base
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04 as base
 LABEL maintainer="nclxwen@gmail.com"
 # =================================================================
 # set evn
@@ -26,7 +26,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     rm -rf /var/lib/apt/lists/* \
            /etc/apt/sources.list.d/cuda.list \
            /etc/apt/sources.list.d/nvidia-ml.list && \
-
     apt-get update && \
 # ==================================================================
 # tools
