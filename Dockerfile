@@ -13,9 +13,11 @@
 # pytorch       latest (pip)
 # torchvision   latest (pip)
 # keras         latest (pip)
+# nibabel       latest (pip)
+# pymc3         latest (pip)
 # ---------------------------------
 
-FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04 as base
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 as base
 LABEL maintainer="nclxwen@gmail.com"
 # =================================================================
 # set evn
@@ -91,7 +93,12 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     $PIP_INSTALL \
         jupyter \
         && \
-# ==================================================================
+# some tools I used
+# ------------------------------------------------------------------
+    $PIP_INSTALL nibabel \
+        pymc3\
+        &&\
+# ------------------------------------------------------------------
 # pytorch
 # ------------------------------------------------------------------
     $PIP_INSTALL \
@@ -141,6 +148,7 @@ RUN apt-get install -y curl grep sed dpkg && \
 # =================================
 RUN pip install --upgrade tornado==5.1.1
 # =================================
+
 # settings
 # =================================
 # set up jupyter notebook
