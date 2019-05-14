@@ -1,5 +1,5 @@
 # =================================
-# cuda          10.0
+# cuda          10.1
 # cudnn         v7
 # ---------------------------------
 # python        3.6
@@ -17,7 +17,7 @@
 # pymc3         latest (pip)
 # ---------------------------------
 
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 as base
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 as base
 LABEL maintainer="nclxwen@gmail.com"
 # =================================================================
 # set evn
