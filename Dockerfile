@@ -15,6 +15,7 @@
 # keras         latest (pip)
 # nibabel       latest (pip)
 # pymc3         latest (pip)
+# Nilearn       latest (pip)
 # ---------------------------------
 
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04 as base
@@ -97,6 +98,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ------------------------------------------------------------------
     $PIP_INSTALL nibabel \
         pymc3\
+        nilearn
         &&\
 # ------------------------------------------------------------------
 # pytorch
