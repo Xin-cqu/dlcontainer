@@ -98,7 +98,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ------------------------------------------------------------------
     $PIP_INSTALL nibabel \
         pymc3\
-        nilearn
+        nilearn\
         &&\
 # ------------------------------------------------------------------
 # pytorch
