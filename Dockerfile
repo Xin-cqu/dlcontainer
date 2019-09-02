@@ -10,6 +10,7 @@
 # ---------------------------------
 # tensorflow    latest (pip)
 # tensorboard   latest (pip) @:6006
+# tensorboardx  latest (pip)
 # pytorch       latest (pip)
 # torchvision   latest (pip)
 # keras         latest (pip)
@@ -120,6 +121,13 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ------------------------------------------------------------------
     $PIP_INSTALL \
         tensorflow-gpu \
+        && \
+# ==================================================================
+# tensorboradx and torchvision
+# ------------------------------------------------------------------      
+    $PIP_INSTALL \
+        torchvision\
+        tenserboardx\
         && \
 # ==================================================================
 # keras
