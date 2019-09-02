@@ -127,7 +127,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # ------------------------------------------------------------------      
     $PIP_INSTALL \
         torchvision\
-        tenserboardx\
+        tensorboardx\
         && \
 # ==================================================================
 # keras
