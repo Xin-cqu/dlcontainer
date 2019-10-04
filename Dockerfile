@@ -14,7 +14,6 @@
 # pytorch       latest (pip)
 # torchvision   latest (pip)
 # keras         latest (pip)
-# nibabel       latest (pip)
 # pymc3         latest (pip)
 # Nilearn       latest (pip)
 # ---------------------------------
@@ -98,7 +97,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         && \
 # some tools I used
 # ------------------------------------------------------------------
-    $PIP_INSTALL nibabel \
+    $PIP_INSTALL \
         pymc3\
         nilearn\
         &&\
