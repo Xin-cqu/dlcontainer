@@ -100,6 +100,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     $PIP_INSTALL \
         pymc3\
         nilearn\
+        mne\
         &&\
 # ------------------------------------------------------------------
 # pytorch
