@@ -166,6 +166,20 @@ RUN apt-get install -y curl grep sed dpkg && \
 RUN pip install --upgrade tornado==5.1.1
 # =================================
 
+# =================================
+# Xgboost + gpu
+# =================================
+RUN cd /usr/local/src && \
+  git clone --recursive https://github.com/dmlc/xgboost && \
+  cd xgboost && \
+  mkdir build && \
+  cd build && \
+  cmake --DUSE_CUDA=ON .. && \
+  make -j
+
+RUN cd /usr/local/src/xgboost/python-package && \
+  python setup.py install 
+
 # settings
 # =================================
 # set up jupyter notebook
