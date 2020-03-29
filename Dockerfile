@@ -170,7 +170,7 @@ RUN pip install --upgrade tornado==5.1.1
 # =================================
 # Xgboost + gpu
 # =================================
-RUN pip install https://s3-us-west-2.amazonaws.com/xgboost-nightly-builds/xgboost-1.0.0_SNAPSHOT+d615536573b702a3ac78a51763fe544b974c8b46-py2.py3-none-manylinux1_x86_64.whl
+RUN pip install xgboost
 
 # settings
 # =================================
