@@ -1,29 +1,9 @@
-# =================================
-# cuda          10.0
-# cudnn         v7
-# ---------------------------------
-# python        3.6
-# anaconda      5.2.0
-# Jupyter       5.1 @:8888
-# ---------------------------------
-# Xgboost       latest(gpu)
-# ---------------------------------
-# tensorflow    latest (pip)
-# tensorboard   latest (pip) @:6006
-# tensorboardx  latest (pip)
-# pytorch       latest (pip)
-# torchvision   latest (pip)
-# keras         latest (pip)
-# pymc3         latest (pip)
-# Nilearn       latest (pip)
-# ---------------------------------
-
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04 as base
+FROM nvidia/cuda:11.8.0-base-ubuntu22.04
 LABEL maintainer="nclxwen@gmail.com"
-# =================================================================
-# set evn
-# -----------------------------------------------------------------
+RUN rm -f /etc/apt/sources.list.d/*.list
+RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list
 RUN apt-get update
+## 
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
     GIT_CLONE="git clone --depth 10" && \
@@ -53,15 +33,15 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive $APT_INSTALL \
-        python3.6 \
-        python3.6-dev \
+        python3.11 \
+        python3.11-dev \
         python3-distutils-extra \
         && \
     wget -O ~/get-pip.py \
         https://bootstrap.pypa.io/get-pip.py && \
-    python3.6 ~/get-pip.py && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python3 && \
-    ln -s /usr/bin/python3.6 /usr/local/bin/python && \
+    python3.11 ~/get-pip.py && \
+    ln -s /usr/bin/python3.11 /usr/local/bin/python3 && \
+    ln -s /usr/bin/python3.11 /usr/local/bin/python && \
     $PIP_INSTALL \
         pip \
         setuptools \
@@ -76,21 +56,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         Cython \
         && \
 # ==================================================================
-# boost
-# ------------------------------------------------------------------
-#    wget -O ~/boost.tar.gz https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz && \
-#    tar -zxf ~/boost.tar.gz -C ~ && \
-#    cd ~/boost_* && \
-#    ./bootstrap.sh --with-python=python3.6 && \
-#    ./b2 install --prefix=/usr/local && \
-# ==================================================================
-# chainer
-# ------------------------------------------------------------------
-    $PIP_INSTALL \
-        cupy \
-        chainer \
-        && \
-# ==================================================================
 # jupyter
 # ------------------------------------------------------------------
     $PIP_INSTALL \
@@ -99,17 +64,9 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 # some tools I used
 # ------------------------------------------------------------------
     $PIP_INSTALL \
-        pymc3\
         nilearn\
         mne\
         numba\
-        &&\
-# ------------------------------------------------------------------
-# Mxnet
-# ------------------------------------------------------------------
-    $PIP_INSTALL \
-        mxnet-cu100\
-        autogluon\
         &&\
 # ------------------------------------------------------------------
 # pytorch
@@ -121,29 +78,10 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
         enum34 \
         pyyaml \
         typing \
-        && \
-    $PIP_INSTALL \
-        torch -f https://download.pytorch.org/whl/nightly/cu100/torch.html \
-        && \
-# ==================================================================
-# tensorflow
-# ------------------------------------------------------------------
-    $PIP_INSTALL \
-        tensorflow-gpu \
-        && \
-# ==================================================================
-# tensorboradx and torchvision
-# ------------------------------------------------------------------      
-    $PIP_INSTALL \
-        torchvision\
-        tensorboardx\
-        && \
-# ==================================================================
-# keras
-# ------------------------------------------------------------------
-    $PIP_INSTALL \
         h5py \
-        keras \
+        && \
+    $PIP_INSTALL \
+        torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
         && \
 # ==================================================================
 # config & cleanup
@@ -166,11 +104,6 @@ RUN apt-get install -y curl grep sed dpkg && \
 # =================================
 RUN pip install --upgrade tornado==5.1.1
 # =================================
-
-# =================================
-# Xgboost + gpu
-# =================================
-RUN pip install xgboost
 
 # settings
 # =================================
