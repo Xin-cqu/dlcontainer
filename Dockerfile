@@ -3,7 +3,6 @@ LABEL maintainer="nclxwen@gmail.com"
 RUN rm -f /etc/apt/sources.list.d/*.list
 RUN sed -i "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list
 RUN apt-get update
-## 
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
     GIT_CLONE="git clone --depth 10" && \
@@ -91,19 +90,6 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/* /tmp/* ~/*
 # =================================
-# tini
-# =================================
-RUN apt-get install -y curl grep sed dpkg && \
-    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
-    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
-    dpkg -i tini.deb && \
-    rm tini.deb && \
-    apt-get clean
-# =================================
-# tornado version=5.1.1
-# =================================
-RUN pip install --upgrade tornado==5.1.1
-# =================================
 
 # settings
 # =================================
@@ -111,6 +97,5 @@ RUN pip install --upgrade tornado==5.1.1
 COPY jupyter_notebook_config.py /root/.jupyter/
 EXPOSE 8888 6006
 RUN mkdir /notebook
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
-CMD ["jupyter", "notebook", "--no-browser", "--allow-root"]
+CMD jupyter notebook --no-browser --allow-root
 WORKDIR /notebook
