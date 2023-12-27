@@ -60,12 +60,14 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
     $PIP_INSTALL \
         jupyter \
         && \
+# ==================================================================
 # some tools I used
 # ------------------------------------------------------------------
     $PIP_INSTALL \
         nilearn\
         mne\
         numba\
+        nni \
         &&\
 # ------------------------------------------------------------------
 # pytorch
